@@ -37,11 +37,20 @@ const IndexContent = () => {
         </div>
       )}
 
-      <main className="container mx-auto px-4 py-8 space-y-12">
-        <SearchSection />
-        <ResultsSection />
-        <MapSection />
-        <PartnershipsSection />
+      {/* Main content com padding-top para compensar header fixo */}
+      <main className="container mx-auto px-4 pt-24 md:pt-28 pb-8 space-y-12">
+        <div id="busca">
+          <SearchSection />
+        </div>
+        <div id="resultados">
+          <ResultsSection />
+        </div>
+        <div id="mapa">
+          <MapSection />
+        </div>
+        <div id="parcerias">
+          <PartnershipsSection />
+        </div>
       </main>
       
       <Footer />
