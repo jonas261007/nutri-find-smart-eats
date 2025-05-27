@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Clock, Phone, Star } from 'lucide-react';
 import { Supplier } from '../types';
@@ -13,8 +12,8 @@ const MapSection = () => {
     {
       id: 1,
       name: 'Mundo Verde',
-      address: 'Rua das Palmeiras, 123 - Jardins',
-      phone: '(11) 3456-7890',
+      address: 'Rua da Aurora, 123 - Boa Vista',
+      phone: '(81) 3456-7890',
       rating: 4.8,
       distance: 0.8,
       type: 'loja_natural',
@@ -23,8 +22,8 @@ const MapSection = () => {
     {
       id: 2,
       name: 'Natureza Viva',
-      address: 'Av. Paulista, 456 - Bela Vista',
-      phone: '(11) 2345-6789',
+      address: 'Av. Agamenon Magalhães, 456 - Derby',
+      phone: '(81) 2345-6789',
       rating: 4.6,
       distance: 1.2,
       type: 'mercado',
@@ -33,8 +32,8 @@ const MapSection = () => {
     {
       id: 3,
       name: 'Padaria Saudável',
-      address: 'Rua Augusta, 789 - Consolação',
-      phone: '(11) 4567-8901',
+      address: 'Rua do Hospício, 789 - Boa Vista',
+      phone: '(81) 4567-8901',
       rating: 4.9,
       distance: 2.1,
       type: 'mercado',
