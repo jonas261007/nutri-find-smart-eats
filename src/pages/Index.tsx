@@ -6,81 +6,59 @@ import ResultsSection from '../components/ResultsSection';
 import MapSection from '../components/MapSection';
 import PartnershipsSection from '../components/PartnershipsSection';
 import Footer from '../components/Footer';
-import { Product, SearchFilters } from '../types';
+import ShoppingList from '../components/ShoppingList';
+import { ShoppingCart } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { AppProvider, useApp } from '../contexts/AppContext';
 
-const Index = () => {
-  const [searchFilters, setSearchFilters] = useState<SearchFilters>({
-    query: '',
-    includedIngredients: [],
-    excludedIngredients: [],
-    allergies: [],
-    dietType: '',
-    priceRange: [0, 100],
-    location: ''
-  });
+const IndexContent = () => {
+  const { shoppingList } = useApp();
+  const [showShoppingList, setShowShoppingList] = useState(false);
 
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      name: 'Quinoa Orgânica',
-      price: 15.99,
-      image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=300&h=200&fit=crop',
-      supplier: 'Mundo Verde',
-      rating: 4.8,
-      ingredients: ['quinoa orgânica'],
-      allergens: [],
-      nutrition: { calories: 368, protein: 14.1, carbs: 64.2, fat: 6.1 },
-      distance: 0.8,
-      inStock: true
-    },
-    {
-      id: 2,
-      name: 'Leite de Amêndoas Zero Lactose',
-      price: 8.50,
-      image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=300&h=200&fit=crop',
-      supplier: 'Natureza Viva',
-      rating: 4.6,
-      ingredients: ['amêndoas', 'água', 'sal marinho'],
-      allergens: ['nozes'],
-      nutrition: { calories: 17, protein: 0.6, carbs: 0.3, fat: 1.5 },
-      distance: 1.2,
-      inStock: true
-    },
-    {
-      id: 3,
-      name: 'Pão Integral Sem Glúten',
-      price: 12.90,
-      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&h=200&fit=crop',
-      supplier: 'Padaria Saudável',
-      rating: 4.9,
-      ingredients: ['farinha de arroz', 'fécula de batata', 'ovos', 'fermento'],
-      allergens: ['ovos'],
-      nutrition: { calories: 265, protein: 8.2, carbs: 49.1, fat: 4.3 },
-      distance: 2.1,
-      inStock: false
-    }
-  ]);
-
-  const handleFilterChange = (newFilters: SearchFilters) => {
-    setSearchFilters(newFilters);
-    // Aqui seria implementada a lógica de filtro real
-    console.log('Filtros atualizados:', newFilters);
-  };
+  const totalItems = shoppingList.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-green-50">
       <Header />
+      
+      {/* Botão flutuante da lista de compras */}
+      {totalItems > 0 && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={() => setShowShoppingList(true)}
+            className="bg-[#706f18] hover:bg-[#5a5a14] rounded-full w-14 h-14 shadow-lg relative"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            <Badge className="absolute -top-2 -right-2 bg-red-500 border-white border-2">
+              {totalItems}
+            </Badge>
+          </Button>
+        </div>
+      )}
+
       <main className="container mx-auto px-4 py-8 space-y-12">
-        <SearchSection 
-          filters={searchFilters} 
-          onFilterChange={handleFilterChange} 
-        />
-        <ResultsSection products={products} />
+        <SearchSection />
+        <ResultsSection />
         <MapSection />
         <PartnershipsSection />
       </main>
+      
       <Footer />
+      
+      <ShoppingList 
+        isOpen={showShoppingList} 
+        onClose={() => setShowShoppingList(false)} 
+      />
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <AppProvider>
+      <IndexContent />
+    </AppProvider>
   );
 };
 

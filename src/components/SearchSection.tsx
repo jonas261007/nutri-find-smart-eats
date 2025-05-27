@@ -1,23 +1,19 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, Camera, Upload } from 'lucide-react';
-import { SearchFilters } from '../types';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import FilterPanel from './FilterPanel';
 import LabelReader from './LabelReader';
+import { useApp } from '../contexts/AppContext';
 
-interface SearchSectionProps {
-  filters: SearchFilters;
-  onFilterChange: (filters: SearchFilters) => void;
-}
-
-const SearchSection = ({ filters, onFilterChange }: SearchSectionProps) => {
+const SearchSection = () => {
+  const { filters, setFilters } = useApp();
   const [showFilters, setShowFilters] = useState(false);
   const [showLabelReader, setShowLabelReader] = useState(false);
 
   const handleSearchChange = (query: string) => {
-    onFilterChange({ ...filters, query });
+    setFilters({ ...filters, query });
   };
 
   return (
@@ -53,6 +49,11 @@ const SearchSection = ({ filters, onFilterChange }: SearchSectionProps) => {
           >
             <Filter className="w-5 h-5" />
             <span>Filtros Avançados</span>
+            {(filters.allergies.length > 0 || filters.dietType || filters.includedIngredients.length > 0) && (
+              <span className="bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                {filters.allergies.length + (filters.dietType ? 1 : 0) + filters.includedIngredients.length}
+              </span>
+            )}
           </Button>
 
           <Button
@@ -75,7 +76,7 @@ const SearchSection = ({ filters, onFilterChange }: SearchSectionProps) => {
         {/* Painel de Filtros */}
         {showFilters && (
           <div className="animate-fade-in">
-            <FilterPanel filters={filters} onFilterChange={onFilterChange} />
+            <FilterPanel />
           </div>
         )}
 

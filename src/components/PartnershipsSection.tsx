@@ -1,12 +1,15 @@
 
-import React from 'react';
-import { Star, MapPin, Zap, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, MapPin, Zap, Users, Calendar } from 'lucide-react';
 import { Gym } from '../types';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+import GymScheduler from './GymScheduler';
 
 const PartnershipsSection = () => {
+  const [selectedGym, setSelectedGym] = useState<Gym | null>(null);
+
   const gyms: Gym[] = [
     {
       id: 1,
@@ -40,15 +43,18 @@ const PartnershipsSection = () => {
   const workoutTips = [
     {
       diet: 'Dieta Vegana',
-      tip: 'Combine exercícios de força com cardio para otimizar a absorção de proteínas vegetais'
+      tip: 'Combine exercícios de força com cardio para otimizar a absorção de proteínas vegetais',
+      exercises: ['Musculação', 'Corrida', 'Crossfit']
     },
     {
       diet: 'Dieta Keto',
-      tip: 'Exercícios de baixa intensidade são ideais para manter a cetose'
+      tip: 'Exercícios de baixa intensidade são ideais para manter a cetose',
+      exercises: ['Caminhada', 'Yoga', 'Pilates']
     },
     {
       diet: 'Low Carb',
-      tip: 'Treinos de alta intensidade intervalada (HIIT) maximizam a queima de gordura'
+      tip: 'Treinos de alta intensidade intervalada (HIIT) maximizam a queima de gordura',
+      exercises: ['HIIT', 'Spinning', 'Funcional']
     }
   ];
 
@@ -110,12 +116,15 @@ const PartnershipsSection = () => {
               </div>
 
               <div className="flex space-x-2">
-                <Button className="flex-1 bg-[#706f18] hover:bg-[#5a5a14]">
-                  <Users className="w-4 h-4 mr-2" />
-                  Conhecer Academia
+                <Button 
+                  className="flex-1 bg-[#706f18] hover:bg-[#5a5a14]"
+                  onClick={() => setSelectedGym(gym)}
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Agendar Visita
                 </Button>
                 <Button variant="outline" className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white">
-                  Direções
+                  <MapPin className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -136,17 +145,35 @@ const PartnershipsSection = () => {
                 <Zap className="w-5 h-5 mr-2 text-[#98a550]" />
                 {tip.diet}
               </h4>
-              <p className="text-gray-700 text-sm leading-relaxed">{tip.tip}</p>
+              <p className="text-gray-700 text-sm leading-relaxed mb-4">{tip.tip}</p>
+              
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Exercícios recomendados:</p>
+                <div className="flex flex-wrap gap-1">
+                  {tip.exercises.map((exercise, exerciseIndex) => (
+                    <Badge key={exerciseIndex} variant="outline" className="text-xs border-[#98a550] text-[#98a550]">
+                      {exercise}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             </Card>
           ))}
         </div>
 
         <div className="text-center mt-6">
           <Button className="bg-[#706f18] hover:bg-[#5a5a14] px-8 py-3">
+            <Users className="w-4 h-4 mr-2" />
             Ver Mais Dicas de Exercícios
           </Button>
         </div>
       </div>
+
+      {/* Modal de Agendamento */}
+      <GymScheduler 
+        gym={selectedGym} 
+        onClose={() => setSelectedGym(null)} 
+      />
     </section>
   );
 };

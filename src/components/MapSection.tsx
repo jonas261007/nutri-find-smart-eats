@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
-import { MapPin, Clock, Phone, Star } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { MapPin, Clock, Phone, Star, Navigation, Loader2 } from 'lucide-react';
 import { Supplier } from '../types';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+import { useGeolocation } from '../hooks/useGeolocation';
+import { useApp } from '../contexts/AppContext';
 
 const MapSection = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('todos');
+  const { location, loading: geoLoading, error: geoError, getCurrentLocation } = useGeolocation();
+  const { userLocation, setUserLocation } = useApp();
+
+  useEffect(() => {
+    if (location) {
+      setUserLocation(location);
+    }
+  }, [location, setUserLocation]);
 
   const suppliers: Supplier[] = [
     {
@@ -38,6 +49,26 @@ const MapSection = () => {
       distance: 2.1,
       type: 'mercado',
       hours: '06:00 - 18:00'
+    },
+    {
+      id: 4,
+      name: 'Bio Market',
+      address: 'Rua da Imperatriz, 321 - Graças',
+      phone: '(81) 5678-9012',
+      rating: 4.7,
+      distance: 1.5,
+      type: 'loja_natural',
+      hours: '09:00 - 19:00'
+    },
+    {
+      id: 5,
+      name: 'Farmácia Natural',
+      address: 'Av. Boa Viagem, 987 - Boa Viagem',
+      phone: '(81) 6789-0123',
+      rating: 4.5,
+      distance: 3.2,
+      type: 'farmacia',
+      hours: '08:00 - 22:00'
     }
   ];
 
@@ -52,6 +83,16 @@ const MapSection = () => {
     ? suppliers 
     : suppliers.filter(s => s.type === selectedFilter);
 
+  const getDirections = (supplier: Supplier) => {
+    const address = encodeURIComponent(supplier.address + ', Recife, PE');
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${address}`;
+    window.open(url, '_blank');
+  };
+
+  const callSupplier = (phone: string) => {
+    window.open(`tel:${phone}`, '_self');
+  };
+
   return (
     <section id="mapa" className="space-y-6">
       <div className="text-center">
@@ -61,6 +102,49 @@ const MapSection = () => {
         <p className="text-gray-600 text-lg">
           Encontre os melhores locais para comprar seus alimentos saudáveis
         </p>
+      </div>
+
+      {/* Geolocalização */}
+      <div className="bg-white rounded-lg p-4 shadow-sm border border-[#98a550]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Navigation className="w-5 h-5 text-[#98a550]" />
+            <div>
+              <h4 className="font-medium text-[#706f18]">Sua Localização</h4>
+              <p className="text-sm text-gray-600">
+                {userLocation 
+                  ? `Lat: ${userLocation.lat.toFixed(4)}, Lng: ${userLocation.lng.toFixed(4)}`
+                  : 'Localização não detectada'
+                }
+              </p>
+            </div>
+          </div>
+          
+          <Button
+            onClick={getCurrentLocation}
+            disabled={geoLoading}
+            variant="outline"
+            className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+          >
+            {geoLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Localizando...
+              </>
+            ) : (
+              <>
+                <Navigation className="w-4 h-4 mr-2" />
+                Usar Minha Localização
+              </>
+            )}
+          </Button>
+        </div>
+        
+        {geoError && (
+          <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
+            {geoError}
+          </div>
+        )}
       </div>
 
       {/* Filtros de Tipo */}
@@ -83,24 +167,54 @@ const MapSection = () => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Mapa Placeholder */}
-        <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-center space-y-4">
+        <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-8 flex items-center justify-center min-h-[400px] relative overflow-hidden">
+          {/* Simulação de mapa com pins */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-1/4 left-1/3 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            <div className="absolute top-3/4 left-2/3 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          </div>
+          
+          <div className="text-center space-y-4 z-10">
             <div className="w-20 h-20 bg-[#98a550] rounded-full flex items-center justify-center mx-auto">
               <MapPin className="w-10 h-10 text-white" />
             </div>
             <h3 className="text-xl font-semibold text-[#706f18]">Mapa Interativo</h3>
-            <p className="text-gray-600">
-              Visualize todas as lojas e fornecedores em um mapa interativo
+            <p className="text-gray-600 max-w-xs">
+              Visualize todas as lojas e fornecedores em um mapa interativo com sua localização atual
             </p>
-            <Button className="bg-[#706f18] hover:bg-[#5a5a14]">
-              Abrir Mapa Completo
-            </Button>
+            <div className="space-y-2">
+              <Button className="bg-[#706f18] hover:bg-[#5a5a14] block mx-auto">
+                Abrir Mapa Completo
+              </Button>
+              {userLocation && (
+                <Badge className="bg-green-500">
+                  <Navigation className="w-3 h-3 mr-1" />
+                  Localização Ativa
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Lista de Fornecedores */}
         <div className="space-y-4">
-          {filteredSuppliers.map((supplier) => (
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-[#706f18]">
+              {filteredSuppliers.length} estabelecimentos encontrados
+            </h3>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+            >
+              Ordenar por distância
+            </Button>
+          </div>
+
+          {filteredSuppliers
+            .sort((a, b) => a.distance - b.distance)
+            .map((supplier) => (
             <Card key={supplier.id} className="p-6 hover:shadow-lg transition-all">
               <div className="flex justify-between items-start mb-4">
                 <div>
@@ -129,7 +243,12 @@ const MapSection = () => {
                 </div>
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 mr-2" />
-                  {supplier.phone}
+                  <button 
+                    onClick={() => callSupplier(supplier.phone)}
+                    className="hover:text-[#706f18] hover:underline transition-colors"
+                  >
+                    {supplier.phone}
+                  </button>
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-4 h-4 mr-2" />
@@ -141,7 +260,12 @@ const MapSection = () => {
                 <Button className="flex-1 bg-[#706f18] hover:bg-[#5a5a14]">
                   Ver Produtos
                 </Button>
-                <Button variant="outline" className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white">
+                <Button 
+                  variant="outline" 
+                  className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+                  onClick={() => getDirections(supplier)}
+                >
+                  <Navigation className="w-4 h-4 mr-1" />
                   Direções
                 </Button>
               </div>

@@ -1,17 +1,14 @@
 
 import React from 'react';
 import { X } from 'lucide-react';
-import { SearchFilters } from '../types';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { useApp } from '../contexts/AppContext';
 
-interface FilterPanelProps {
-  filters: SearchFilters;
-  onFilterChange: (filters: SearchFilters) => void;
-}
-
-const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
+const FilterPanel = () => {
+  const { filters, setFilters } = useApp();
+  
   const commonAllergies = ['Glúten', 'Lactose', 'Nozes', 'Soja', 'Ovos', 'Peixe', 'Crustáceos'];
   const dietTypes = ['Vegana', 'Vegetariana', 'Keto', 'Low Carb', 'Paleo', 'Mediterrânea'];
 
@@ -19,11 +16,55 @@ const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
     const newAllergies = filters.allergies.includes(allergy)
       ? filters.allergies.filter(a => a !== allergy)
       : [...filters.allergies, allergy];
-    onFilterChange({ ...filters, allergies: newAllergies });
+    setFilters({ ...filters, allergies: newAllergies });
   };
 
   const setDietType = (diet: string) => {
-    onFilterChange({ ...filters, dietType: diet === filters.dietType ? '' : diet });
+    setFilters({ ...filters, dietType: diet === filters.dietType ? '' : diet });
+  };
+
+  const addIncludedIngredient = (ingredient: string) => {
+    if (ingredient.trim() && !filters.includedIngredients.includes(ingredient.trim())) {
+      setFilters({ 
+        ...filters, 
+        includedIngredients: [...filters.includedIngredients, ingredient.trim()] 
+      });
+    }
+  };
+
+  const removeIncludedIngredient = (ingredient: string) => {
+    setFilters({ 
+      ...filters, 
+      includedIngredients: filters.includedIngredients.filter(i => i !== ingredient) 
+    });
+  };
+
+  const addExcludedIngredient = (ingredient: string) => {
+    if (ingredient.trim() && !filters.excludedIngredients.includes(ingredient.trim())) {
+      setFilters({ 
+        ...filters, 
+        excludedIngredients: [...filters.excludedIngredients, ingredient.trim()] 
+      });
+    }
+  };
+
+  const removeExcludedIngredient = (ingredient: string) => {
+    setFilters({ 
+      ...filters, 
+      excludedIngredients: filters.excludedIngredients.filter(i => i !== ingredient) 
+    });
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      query: filters.query, // Manter a busca por texto
+      includedIngredients: [],
+      excludedIngredients: [],
+      allergies: [],
+      dietType: '',
+      priceRange: [0, 100],
+      location: ''
+    });
   };
 
   return (
@@ -31,6 +72,64 @@ const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
       <h3 className="text-xl font-semibold text-[#706f18] mb-6">Filtros Personalizados</h3>
       
       <div className="grid md:grid-cols-2 gap-6">
+        {/* Ingredientes para Incluir */}
+        <div>
+          <h4 className="font-medium text-[#706f18] mb-3">Deve Conter</h4>
+          <div className="space-y-2">
+            <Input
+              placeholder="Digite um ingrediente e pressione Enter"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  addIncludedIngredient(e.currentTarget.value);
+                  e.currentTarget.value = '';
+                }
+              }}
+              className="border-[#98a550] focus:border-[#706f18]"
+            />
+            <div className="flex flex-wrap gap-2">
+              {filters.includedIngredients.map(ingredient => (
+                <Badge
+                  key={ingredient}
+                  className="bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer"
+                  onClick={() => removeIncludedIngredient(ingredient)}
+                >
+                  {ingredient}
+                  <X className="w-3 h-3 ml-1" />
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Ingredientes para Excluir */}
+        <div>
+          <h4 className="font-medium text-[#706f18] mb-3">Não Deve Conter</h4>
+          <div className="space-y-2">
+            <Input
+              placeholder="Digite um ingrediente e pressione Enter"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  addExcludedIngredient(e.currentTarget.value);
+                  e.currentTarget.value = '';
+                }
+              }}
+              className="border-[#98a550] focus:border-[#706f18]"
+            />
+            <div className="flex flex-wrap gap-2">
+              {filters.excludedIngredients.map(ingredient => (
+                <Badge
+                  key={ingredient}
+                  className="bg-red-100 text-red-800 hover:bg-red-200 cursor-pointer"
+                  onClick={() => removeExcludedIngredient(ingredient)}
+                >
+                  {ingredient}
+                  <X className="w-3 h-3 ml-1" />
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Alergias e Restrições */}
         <div>
           <h4 className="font-medium text-[#706f18] mb-3">Alergias e Intolerâncias</h4>
@@ -85,7 +184,7 @@ const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
               type="number"
               placeholder="Min"
               value={filters.priceRange[0]}
-              onChange={(e) => onFilterChange({
+              onChange={(e) => setFilters({
                 ...filters,
                 priceRange: [Number(e.target.value), filters.priceRange[1]]
               })}
@@ -96,7 +195,7 @@ const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
               type="number"
               placeholder="Max"
               value={filters.priceRange[1]}
-              onChange={(e) => onFilterChange({
+              onChange={(e) => setFilters({
                 ...filters,
                 priceRange: [filters.priceRange[0], Number(e.target.value)]
               })}
@@ -112,27 +211,24 @@ const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
             type="text"
             placeholder="CEP ou bairro"
             value={filters.location}
-            onChange={(e) => onFilterChange({ ...filters, location: e.target.value })}
+            onChange={(e) => setFilters({ ...filters, location: e.target.value })}
             className="border-[#98a550] focus:border-[#706f18]"
           />
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end space-x-3">
-        <Button variant="outline" onClick={() => onFilterChange({
-          query: '',
-          includedIngredients: [],
-          excludedIngredients: [],
-          allergies: [],
-          dietType: '',
-          priceRange: [0, 100],
-          location: ''
-        })}>
-          Limpar Filtros
-        </Button>
-        <Button className="bg-[#706f18] hover:bg-[#5a5a14]">
-          Aplicar Filtros
-        </Button>
+      <div className="mt-6 flex justify-between items-center">
+        <div className="text-sm text-gray-600">
+          {filters.allergies.length + filters.includedIngredients.length + filters.excludedIngredients.length + (filters.dietType ? 1 : 0)} filtros ativos
+        </div>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={clearAllFilters}>
+            Limpar Filtros
+          </Button>
+          <Button className="bg-[#706f18] hover:bg-[#5a5a14]">
+            Aplicar Filtros
+          </Button>
+        </div>
       </div>
     </div>
   );
