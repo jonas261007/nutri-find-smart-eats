@@ -1,10 +1,15 @@
 
 import React, { useState } from 'react';
-import { Search, MapPin, Menu, X } from 'lucide-react';
+import { Search, MapPin, Menu, X, User, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -18,6 +23,15 @@ const Header = () => {
     }
   };
 
+  const handleAuthClick = () => {
+    if (user) {
+      navigate('/perfil');
+    } else {
+      navigate('/login');
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="bg-[#706f18] text-white shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -28,7 +42,12 @@ const Header = () => {
               <Search className="w-5 h-5 md:w-6 md:h-6" />
             </div>
             <div>
-              <h1 className="text-lg md:text-2xl font-bold">HealthyFood</h1>
+              <h1 
+                className="text-lg md:text-2xl font-bold cursor-pointer"
+                onClick={() => navigate('/')}
+              >
+                HealthyFood
+              </h1>
               <p className="text-green-200 text-xs md:text-sm hidden sm:block">
                 Alimentos saudáveis para sua dieta
               </p>
@@ -63,10 +82,40 @@ const Header = () => {
             </button>
           </nav>
 
-          {/* Localização - oculta em mobile */}
-          <div className="hidden md:flex items-center space-x-2 text-green-200">
-            <MapPin className="w-4 h-4" />
-            <span className="text-sm">Recife, PE</span>
+          {/* Área de usuário e localização */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Localização */}
+            <div className="flex items-center space-x-2 text-green-200">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">Recife, PE</span>
+            </div>
+
+            {/* Botão de login/perfil */}
+            {user ? (
+              <Button
+                onClick={handleAuthClick}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-[#5a5a14] p-2"
+              >
+                <Avatar className="w-6 h-6 mr-2">
+                  <AvatarFallback className="bg-[#98a550] text-white text-xs">
+                    {user.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm">{user.name.split(' ')[0]}</span>
+              </Button>
+            ) : (
+              <Button
+                onClick={handleAuthClick}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-[#5a5a14] p-2"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                <span className="text-sm">Entrar</span>
+              </Button>
+            )}
           </div>
 
           {/* Botão menu mobile */}
@@ -109,8 +158,26 @@ const Header = () => {
                 🏋️‍♂️ Academias
               </button>
               
+              {/* Botão de login/perfil no menu mobile */}
+              <button
+                onClick={handleAuthClick}
+                className="text-left hover:text-green-200 transition-colors py-2 text-sm border-t border-green-600 mt-2 pt-2"
+              >
+                {user ? (
+                  <div className="flex items-center">
+                    <User className="w-4 h-4 mr-2" />
+                    Meu Perfil
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Entrar
+                  </div>
+                )}
+              </button>
+              
               {/* Localização no menu mobile */}
-              <div className="flex items-center space-x-2 text-green-200 py-2 border-t border-green-600 mt-2 pt-2">
+              <div className="flex items-center space-x-2 text-green-200 py-2">
                 <MapPin className="w-4 h-4" />
                 <span className="text-sm">Recife, PE</span>
               </div>

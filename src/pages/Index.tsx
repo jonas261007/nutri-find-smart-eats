@@ -11,6 +11,7 @@ import { ShoppingCart } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { AppProvider, useApp } from '../contexts/AppContext';
+import { AuthProvider } from '../contexts/AuthContext';
 
 const IndexContent = () => {
   const { shoppingList } = useApp();
@@ -65,9 +66,11 @@ const IndexContent = () => {
 
 const Index = () => {
   return (
-    <AppProvider>
-      <IndexContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <IndexContent />
+      </AppProvider>
+    </AuthProvider>
   );
 };
 
