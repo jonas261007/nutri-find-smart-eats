@@ -60,7 +60,7 @@ const Header = () => {
                 className="text-lg md:text-2xl font-bold cursor-pointer"
                 onClick={() => navigate('/')}
               >
-                HealthyFood
+                NutriFind
               </h1>
               <p className="text-green-200 text-xs md:text-sm hidden sm:block">
                 Alimentos saudáveis para sua dieta
