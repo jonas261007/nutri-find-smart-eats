@@ -35,8 +35,9 @@ export interface Supplier {
   phone: string;
   rating: number;
   distance: number;
-  type: 'mercado' | 'loja_natural' | 'farmacia';
+  type: 'mercado' | 'loja_natural' | 'farmacia' | 'academia';
   hours: string;
+  location: { lat: number; lng: number };
 }
 
 export interface Gym {

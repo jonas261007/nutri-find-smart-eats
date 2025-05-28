@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { MapPin, ShoppingCart, Phone, Star } from 'lucide-react';
+import { MapPin, ShoppingCart, Phone, Star, Navigation } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { useApp } from '../contexts/AppContext';
 import { Supplier } from '../types';
 import { useNavigate } from 'react-router-dom';
+import InteractiveMap from './InteractiveMap';
 
 const MapSection = () => {
   const { userLocation, setUserLocation } = useApp();
@@ -44,7 +45,7 @@ const MapSection = () => {
       rating: 4.0,
       location: { lat: -8.06639, lng: -34.90583 },
       distance: 2.1,
-      type: 'mercado_organico',
+      type: 'mercado',
       hours: '07:00 - 22:00'
     },
     {
@@ -91,35 +92,46 @@ const MapSection = () => {
   }, [setUserLocation]);
 
   useEffect(() => {
-    // Simula o filtro de fornecedores por tipo (loja_natural, academia)
-    const filtered = suppliers.filter(supplier => supplier.type === 'loja_natural');
+    // Filtrar fornecedores mostrando lojas naturais e academias
+    const filtered = suppliers.filter(supplier => 
+      supplier.type === 'loja_natural' || supplier.type === 'academia'
+    );
     setFilteredSuppliers(filtered);
   }, [suppliers]);
 
-  const mapContainerStyle = {
-    width: '100%',
-    height: '400px',
-  };
-
-  const mapOptions = {
-    disableDefaultUI: true,
-    zoomControl: true,
-  };
-
-  const handleMarkerClick = (supplier: Supplier) => {
+  const handleSupplierClick = (supplier: Supplier) => {
     setSelectedSupplier(supplier);
   };
 
   const handleViewProducts = (supplierName: string) => {
     filterBySupplier(supplierName);
+    // Scroll to results section
+    setTimeout(() => {
+      const element = document.getElementById('resultados');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
 
-  const handleNavigateToSupplier = () => {
-    if (selectedSupplier) {
-      // Implemente a lógica de navegação aqui, por exemplo, usando window.open
-      console.log(`Navegando para: ${selectedSupplier.address}`);
-      // window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedSupplier.location.lat},${selectedSupplier.location.lng}`);
-      navigate('/perfil');
+  const handleNavigateToSupplier = (supplier: Supplier) => {
+    // Abrir Google Maps para direções
+    const encodedAddress = encodeURIComponent(supplier.address + ', Recife, PE');
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+  };
+
+  const getSupplierTypeLabel = (type: string) => {
+    switch (type) {
+      case 'loja_natural':
+        return 'Loja Natural';
+      case 'mercado':
+        return 'Mercado';
+      case 'farmacia':
+        return 'Farmácia';
+      case 'academia':
+        return 'Academia';
+      default:
+        return 'Estabelecimento';
     }
   };
 
@@ -134,29 +146,12 @@ const MapSection = () => {
         </p>
       </div>
 
-      {/* Mapa */}
-      {userLocation ? (
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''}>
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            zoom={15}
-            center={userLocation}
-            options={mapOptions}
-          >
-            {filteredSuppliers.map((supplier) => (
-              <Marker
-                key={supplier.id}
-                position={supplier.location}
-                onClick={() => handleMarkerClick(supplier)}
-              />
-            ))}
-          </GoogleMap>
-        </LoadScript>
-      ) : (
-        <p className="text-center text-gray-500">
-          Carregando mapa...
-        </p>
-      )}
+      {/* Mapa Interativo */}
+      <InteractiveMap
+        suppliers={filteredSuppliers}
+        userLocation={userLocation}
+        onSupplierClick={handleSupplierClick}
+      />
 
       {/* Lista de Fornecedores */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,7 +159,7 @@ const MapSection = () => {
           <Card key={supplier.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
             <div className="relative">
               <div className="absolute top-2 left-2 bg-white bg-opacity-80 rounded-md p-1 px-2 text-sm text-gray-700">
-                {supplier.type === 'loja_natural' ? 'Loja Natural' : 'Academia'}
+                {getSupplierTypeLabel(supplier.type)}
               </div>
             </div>
             
@@ -175,6 +170,7 @@ const MapSection = () => {
               <div className="flex items-center space-x-1 mt-2">
                 <Star className="w-4 h-4 text-yellow-500 fill-current" />
                 <span className="text-sm font-medium">{supplier.rating}</span>
+                <span className="text-sm text-gray-500">• {supplier.distance} km</span>
               </div>
               <p className="text-gray-600 text-sm mt-2">
                 <MapPin className="w-3 h-3 inline mr-1" />
@@ -183,6 +179,9 @@ const MapSection = () => {
               <p className="text-gray-600 text-sm">
                 <Phone className="w-3 h-3 inline mr-1" />
                 {supplier.phone}
+              </p>
+              <p className="text-gray-600 text-sm">
+                Horário: {supplier.hours}
               </p>
 
               <div className="flex space-x-2 mt-4">
@@ -196,9 +195,10 @@ const MapSection = () => {
                 <Button 
                   variant="outline" 
                   className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
-                  onClick={handleNavigateToSupplier}
+                  onClick={() => handleNavigateToSupplier(supplier)}
                 >
-                  Ver Detalhes
+                  <Navigation className="w-4 h-4 mr-2" />
+                  Direções
                 </Button>
               </div>
             </div>
