@@ -153,7 +153,7 @@ const MapSection = () => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredSuppliers.map(supplier => <Card key={supplier.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
             <div className="relative">
-              <div className="absolute top-2 left-2 bg-white bg-opacity-80 rounded-md p-1 px-2 text-sm text-gray-700 py-px">
+              <div className="absolute top-2 left-2 bg-white bg-opacity-80 rounded-md p-1 text-sm text-gray-700 py-px px-[2px]">
                 {getSupplierTypeLabel(supplier.type)}
               </div>
             </div>
