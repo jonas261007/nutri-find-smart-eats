@@ -7,9 +7,11 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useApp } from '../contexts/AppContext';
+import InteractiveMap from './InteractiveMap';
 
 const MapSection = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('todos');
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const { location, loading: geoLoading, error: geoError, getCurrentLocation } = useGeolocation();
   const { userLocation, setUserLocation } = useApp();
 
@@ -93,6 +95,15 @@ const MapSection = () => {
     window.open(`tel:${phone}`, '_self');
   };
 
+  const handleSupplierMapClick = (supplier: Supplier) => {
+    setSelectedSupplier(supplier);
+    // Scroll para a lista de fornecedores
+    const supplierCard = document.getElementById(`supplier-${supplier.id}`);
+    if (supplierCard) {
+      supplierCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
     <section id="mapa" className="space-y-6">
       <div className="text-center">
@@ -166,35 +177,13 @@ const MapSection = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Mapa Placeholder */}
-        <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-8 flex items-center justify-center min-h-[400px] relative overflow-hidden">
-          {/* Simulação de mapa com pins */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-1/4 left-1/3 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <div className="absolute top-3/4 left-2/3 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          </div>
-          
-          <div className="text-center space-y-4 z-10">
-            <div className="w-20 h-20 bg-[#98a550] rounded-full flex items-center justify-center mx-auto">
-              <MapPin className="w-10 h-10 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-[#706f18]">Mapa Interativo</h3>
-            <p className="text-gray-600 max-w-xs">
-              Visualize todas as lojas e fornecedores em um mapa interativo com sua localização atual
-            </p>
-            <div className="space-y-2">
-              <Button className="bg-[#706f18] hover:bg-[#5a5a14] block mx-auto">
-                Abrir Mapa Completo
-              </Button>
-              {userLocation && (
-                <Badge className="bg-green-500">
-                  <Navigation className="w-3 h-3 mr-1" />
-                  Localização Ativa
-                </Badge>
-              )}
-            </div>
-          </div>
+        {/* Mapa Interativo Real */}
+        <div>
+          <InteractiveMap 
+            suppliers={filteredSuppliers}
+            userLocation={userLocation}
+            onSupplierClick={handleSupplierMapClick}
+          />
         </div>
 
         {/* Lista de Fornecedores */}
@@ -215,7 +204,13 @@ const MapSection = () => {
           {filteredSuppliers
             .sort((a, b) => a.distance - b.distance)
             .map((supplier) => (
-            <Card key={supplier.id} className="p-6 hover:shadow-lg transition-all">
+            <Card 
+              key={supplier.id} 
+              id={`supplier-${supplier.id}`}
+              className={`p-6 hover:shadow-lg transition-all ${
+                selectedSupplier?.id === supplier.id ? 'ring-2 ring-[#98a550] bg-green-50' : ''
+              }`}
+            >
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold text-[#706f18]">{supplier.name}</h3>
