@@ -10,10 +10,14 @@ const Footer = () => {
           {/* Logo e Descrição */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#98a550] rounded-full flex items-center justify-center">
-                <Search className="w-5 h-5" />
+              <div className="w-10 h-10 bg-[#e7e5a2] rounded-full flex items-center justify-center">
+                <img 
+  src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
+  alt="NutriFind Logo" 
+  className="w-10 h-10 md:w-14 md:h-14 object-contain"
+/>
               </div>
-              <h3 className="text-xl font-bold">HealthyFood</h3>
+              <h3 className="text-xl font-bold">NutriFind</h3>
             </div>
             <p className="text-green-200 text-sm leading-relaxed">
               Encontre alimentos saudáveis e acessíveis alinhados à sua dieta pessoal. 
@@ -57,7 +61,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-[#98a550]" />
-                <span className="text-green-200">contato@healthyfood.com</span>
+                <span className="text-green-200">contato@NutriFind.com</span>
               </div>
             </div>
           </div>
@@ -69,8 +73,8 @@ const Footer = () => {
         {/* Copyright */}
         <div className="text-center">
           <p className="text-green-200 text-sm flex items-center justify-center space-x-2">
-            <span>© 2024 HealthyFood. Desenvolvido com</span>
-            <Heart className="w-4 h-4 text-red-400 fill-current" />
+            <span>© 2025 NutriFind. Desenvolvido com</span>
+            <Heart className="w-4 h-4 text-[#fff5bb] fill-current" />
             <span>para uma vida mais saudável.</span>
           </p>
         </div>
