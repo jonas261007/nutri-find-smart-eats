@@ -6,9 +6,11 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import GymScheduler from './GymScheduler';
+import ExerciseTipsModal from './ExerciseTipsModal';
 
 const PartnershipsSection = () => {
   const [selectedGym, setSelectedGym] = useState<Gym | null>(null);
+  const [showExerciseTips, setShowExerciseTips] = useState(false);
 
   const gyms: Gym[] = [
     {
@@ -57,6 +59,12 @@ const PartnershipsSection = () => {
       exercises: ['HIIT', 'Spinning', 'Funcional']
     }
   ];
+
+  const getDirections = (gym: Gym) => {
+    const address = encodeURIComponent(gym.address + ', Recife, PE');
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${address}`;
+    window.open(url, '_blank');
+  };
 
   return (
     <section id="parcerias" className="space-y-8">
@@ -123,7 +131,11 @@ const PartnershipsSection = () => {
                   <Calendar className="w-4 h-4 mr-2" />
                   Agendar Visita
                 </Button>
-                <Button variant="outline" className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white">
+                <Button 
+                  variant="outline" 
+                  className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+                  onClick={() => getDirections(gym)}
+                >
                   <MapPin className="w-4 h-4" />
                 </Button>
               </div>
@@ -162,7 +174,10 @@ const PartnershipsSection = () => {
         </div>
 
         <div className="text-center mt-6">
-          <Button className="bg-[#706f18] hover:bg-[#5a5a14] px-8 py-3">
+          <Button 
+            className="bg-[#706f18] hover:bg-[#5a5a14] px-8 py-3"
+            onClick={() => setShowExerciseTips(true)}
+          >
             <Users className="w-4 h-4 mr-2" />
             Ver Mais Dicas de Exercícios
           </Button>
@@ -173,6 +188,12 @@ const PartnershipsSection = () => {
       <GymScheduler 
         gym={selectedGym} 
         onClose={() => setSelectedGym(null)} 
+      />
+
+      {/* Modal de Dicas de Exercícios */}
+      <ExerciseTipsModal 
+        isOpen={showExerciseTips}
+        onClose={() => setShowExerciseTips(false)}
       />
     </section>
   );

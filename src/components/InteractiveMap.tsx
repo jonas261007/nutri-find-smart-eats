@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Supplier } from '../types';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, Upload, Camera } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -18,7 +18,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const [showTokenInput, setShowTokenInput] = useState(false);
+  const [useStaticMap, setUseStaticMap] = useState(true);
 
   const initializeMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
@@ -50,7 +51,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
 
     // Adicionar marcadores das lojas
     suppliers.forEach((supplier) => {
-      // Coordenadas aproximadas baseadas nos endereços (em uma implementação real, você usaria geocoding)
       const coords = getSupplierCoordinates(supplier);
       
       const markerColor = supplier.type === 'loja_natural' ? '#98a550' : 
@@ -80,7 +80,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
         )
         .addTo(map.current);
 
-      // Evento de clique no marcador
       marker.getElement().addEventListener('click', () => {
         if (onSupplierClick) {
           onSupplierClick(supplier);
@@ -89,11 +88,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
     });
 
     setShowTokenInput(false);
+    setUseStaticMap(false);
   };
 
-  // Função para obter coordenadas aproximadas das lojas (simulado)
   const getSupplierCoordinates = (supplier: Supplier): [number, number] => {
-    // Em uma implementação real, você usaria uma API de geocoding
     const baseCoords: { [key: string]: [number, number] } = {
       'Mundo Verde': [-34.8720, -8.0476],
       'Natureza Viva': [-34.8650, -8.0500],
@@ -112,6 +110,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
     }
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log('Foto enviada:', file.name);
+      // Simular processamento da foto
+      alert('Foto enviada com sucesso! Funcionalidade em desenvolvimento.');
+    }
+  };
+
   useEffect(() => {
     if (mapboxToken && !map.current) {
       initializeMap();
@@ -123,6 +130,98 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
       }
     };
   }, [mapboxToken, suppliers, userLocation]);
+
+  if (useStaticMap) {
+    return (
+      <div className="relative">
+        {/* Mapa Estático */}
+        <div className="w-full h-[400px] rounded-2xl shadow-lg bg-gradient-to-br from-green-100 to-blue-100 relative overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <MapPin className="w-16 h-16 text-[#98a550] mx-auto" />
+              <h3 className="text-xl font-semibold text-[#706f18]">Mapa Interativo</h3>
+              <p className="text-gray-600 text-sm max-w-md">
+                Clique nos fornecedores abaixo para ver detalhes ou ative o Mapbox para experiência completa
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+                <Button
+                  onClick={() => setShowTokenInput(true)}
+                  variant="outline"
+                  className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+                >
+                  Ativar Mapbox
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+                    onClick={() => document.getElementById('photo-upload')?.click()}
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Foto
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload
+                  </Button>
+                </div>
+              </div>
+
+              <input
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+              
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+            </div>
+          </div>
+
+          {/* Marcadores estáticos simulados */}
+          <div className="absolute top-1/4 left-1/3 w-4 h-4 bg-[#98a550] rounded-full border-2 border-white shadow-lg"></div>
+          <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-[#4285f4] rounded-full border-2 border-white shadow-lg"></div>
+          <div className="absolute bottom-1/3 left-1/2 w-4 h-4 bg-[#9c27b0] rounded-full border-2 border-white shadow-lg"></div>
+          <div className="absolute top-1/3 right-1/4 w-4 h-4 bg-[#706f18] rounded-full border-2 border-white shadow-lg"></div>
+        </div>
+
+        {/* Legenda */}
+        <div className="absolute top-4 left-4 bg-white rounded-lg p-2 shadow-md">
+          <div className="flex items-center space-x-2 text-sm">
+            <div className="w-3 h-3 bg-[#706f18] rounded-full"></div>
+            <span>Sua localização</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm mt-1">
+            <div className="w-3 h-3 bg-[#98a550] rounded-full"></div>
+            <span>Lojas Naturais</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm mt-1">
+            <div className="w-3 h-3 bg-[#4285f4] rounded-full"></div>
+            <span>Mercados</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm mt-1">
+            <div className="w-3 h-3 bg-[#9c27b0] rounded-full"></div>
+            <span>Farmácias</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (showTokenInput) {
     return (
@@ -147,9 +246,22 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ suppliers, userLocation
                 className="mt-1"
               />
             </div>
-            <Button type="submit" className="bg-[#706f18] hover:bg-[#5a5a14] w-full">
-              Ativar Mapa
-            </Button>
+            <div className="flex space-x-2">
+              <Button type="submit" className="bg-[#706f18] hover:bg-[#5a5a14] flex-1">
+                Ativar Mapa
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => {
+                  setShowTokenInput(false);
+                  setUseStaticMap(true);
+                }}
+                className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
+              >
+                Cancelar
+              </Button>
+            </div>
           </form>
         </div>
       </div>
