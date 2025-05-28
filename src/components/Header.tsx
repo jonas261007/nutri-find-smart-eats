@@ -52,12 +52,12 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo e título */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#98a550] rounded-full flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#e7e5a2] rounded-full flex items-center justify-center overflow-hidden">
               <img 
-                src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
-                alt="NutriFind Logo" 
-                className="w-6 h-6 md:w-8 md:h-8 object-contain"
-              />
+  src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
+  alt="NutriFind Logo" 
+  className="w-10 h-10 md:w-10 md:h-14 object-contain"
+/>
             </div>
             <div>
               <h1 
@@ -66,7 +66,7 @@ const Header = () => {
               >
                 NutriFind
               </h1>
-              <p className="text-green-200 text-xs md:text-sm hidden sm:block">
+              <p className="text-whait-200 text-xs md:text-sm hidden sm:block">
                 Alimentos saudáveis para sua dieta
               </p>
             </div>
@@ -103,7 +103,7 @@ const Header = () => {
           {/* Área de usuário e localização */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Localização */}
-            <div className="flex items-center space-x-2 text-green-200">
+            <div className="flex items-center space-x-2 text-white-200">
               <MapPin className="w-4 h-4" />
               <span className="text-sm">Recife, PE</span>
             </div>
@@ -117,7 +117,7 @@ const Header = () => {
                 className="text-white hover:bg-[#5a5a14] p-2"
               >
                 <Avatar className="w-6 h-6 mr-2">
-                  <AvatarFallback className="bg-[#98a550] text-white text-xs">
+                  <AvatarFallback className="bg-[#a4b15a] text-white text-xs">
                     {user.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -128,7 +128,7 @@ const Header = () => {
                 onClick={handleAuthClick}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-[#5a5a14] p-2"
+                className="text-white hover:bg-[#b2b25d] p-2"
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 <span className="text-sm">Entrar</span>
@@ -195,7 +195,7 @@ const Header = () => {
               </button>
               
               {/* Localização no menu mobile */}
-              <div className="flex items-center space-x-2 text-green-200 py-2">
+              <div className="flex items-center space-x-2 text-white-200 py-2">
                 <MapPin className="w-4 h-4" />
                 <span className="text-sm">Recife, PE</span>
               </div>

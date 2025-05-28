@@ -38,10 +38,14 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-green-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#706f18] rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-2xl font-bold">H</span>
+          <div className="w-16 h-16 bg-[#e7e5a2] rounded-full flex items-center justify-center mx-auto mb-4">
+            <img 
+  src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
+  alt="NutriFind Logo" 
+  className="w-10 h-10 md:w-14 md:h-14 object-contain"
+/>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">HealthyFood</h1>
+          <h1 className="text-3xl font-bold text-gray-900">NutriFind</h1>
           <p className="text-gray-600">Faça login em sua conta</p>
         </div>
 

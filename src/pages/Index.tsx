@@ -28,7 +28,7 @@ const IndexContent = () => {
         <div className="fixed bottom-6 right-6 z-40">
           <Button
             onClick={() => setShowShoppingList(true)}
-            className="bg-[#706f18] hover:bg-[#5a5a14] rounded-full w-14 h-14 shadow-lg relative"
+            className="bg-[#706f18] hover:bg-[#626218] rounded-full w-14 h-14 shadow-lg relative"
           >
             <ShoppingCart className="w-6 h-6" />
             <Badge className="absolute -top-2 -right-2 bg-red-500 border-white border-2">

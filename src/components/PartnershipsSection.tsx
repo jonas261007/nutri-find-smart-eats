@@ -19,8 +19,8 @@ const PartnershipsSection = () => {
       address: 'Rua dos Esportes, 100 - Centro',
       distance: 0.5,
       rating: 4.9,
-      promotion: '20% OFF no primeiro mês para usuários HealthyFood',
-      image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=250&fit=crop'
+      promotion: '20% OFF no primeiro mês para usuários NutriFind',
+      image: 'https://media.istockphoto.com/id/1679800838/pt/foto/close-up-of-feet-sportman-runner-running-on-treadmill-in-fitness-club-cardio-workout-healthy.jpg?s=612x612&w=0&k=20&c=olUbpbeN9jnIlQ7BXkharvuYwJYhZgUBSLHHxLKvN9I='
     },
     {
       id: 2,
@@ -29,7 +29,7 @@ const PartnershipsSection = () => {
       distance: 1.1,
       rating: 4.7,
       promotion: 'Avaliação física gratuita + plano personalizado',
-      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=250&fit=crop'
+      image: 'https://s2-ge.glbimg.com/K2qGf0TpNYFJlZw3fD4hoIFwL9Q=/0x0:1254x836/984x0/smart/filters:strip_icc()/s.glbimg.com/es/ge/f/original/2020/02/13/academia_amigos.jpg'
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ const PartnershipsSection = () => {
       distance: 1.8,
       rating: 4.8,
       promotion: 'Aulas de yoga e pilates inclusas no plano básico',
-      image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=250&fit=crop'
+      image: 'https://vitat.com.br/wp-content/uploads/2021/09/shutterstock_721502398_easy-resi.jpg'
     }
   ];
 
