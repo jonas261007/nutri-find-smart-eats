@@ -52,8 +52,12 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo e título */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#98a550] rounded-full flex items-center justify-center">
-              <Search className="w-5 h-5 md:w-6 md:h-6" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#98a550] rounded-full flex items-center justify-center overflow-hidden">
+              <img 
+                src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
+                alt="NutriFind Logo" 
+                className="w-6 h-6 md:w-8 md:h-8 object-contain"
+              />
             </div>
             <div>
               <h1 
