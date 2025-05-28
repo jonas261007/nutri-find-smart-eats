@@ -1,33 +1,26 @@
-
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Phone, Star, Navigation, Loader2 } from 'lucide-react';
-import { Supplier } from '../types';
-import { Card } from '../components/ui/card';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { MapPin, ShoppingCart, Phone, Star } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { useGeolocation } from '../hooks/useGeolocation';
+import { Card } from '../components/ui/card';
 import { useApp } from '../contexts/AppContext';
-import InteractiveMap from './InteractiveMap';
+import { Supplier } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 const MapSection = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string>('todos');
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
-  const { location, loading: geoLoading, error: geoError, getCurrentLocation } = useGeolocation();
   const { userLocation, setUserLocation } = useApp();
+  const { filterBySupplier } = useApp();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (location) {
-      setUserLocation(location);
-    }
-  }, [location, setUserLocation]);
-
-  const suppliers: Supplier[] = [
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([
     {
       id: 1,
       name: 'Mundo Verde',
-      address: 'Rua da Aurora, 123 - Boa Vista',
-      phone: '(81) 3456-7890',
-      rating: 4.8,
+      address: 'Av. Boa Viagem, 1234',
+      phone: '(81) 9999-9999',
+      rating: 4.5,
+      location: { lat: -8.11111, lng: -34.87833 },
       distance: 0.8,
       type: 'loja_natural',
       hours: '08:00 - 20:00'
@@ -35,238 +28,182 @@ const MapSection = () => {
     {
       id: 2,
       name: 'Natureza Viva',
-      address: 'Av. Agamenon Magalhães, 456 - Derby',
-      phone: '(81) 2345-6789',
-      rating: 4.6,
+      address: 'Rua da Aurora, 567',
+      phone: '(81) 8888-8888',
+      rating: 4.2,
+      location: { lat: -8.05389, lng: -34.88194 },
       distance: 1.2,
-      type: 'mercado',
-      hours: '07:00 - 22:00'
+      type: 'loja_natural',
+      hours: '09:00 - 21:00'
     },
     {
       id: 3,
-      name: 'Padaria Saudável',
-      address: 'Rua do Hospício, 789 - Boa Vista',
-      phone: '(81) 4567-8901',
-      rating: 4.9,
+      name: 'Bio Market',
+      address: 'Av. Caxangá, 789',
+      phone: '(81) 7777-7777',
+      rating: 4.0,
+      location: { lat: -8.06639, lng: -34.90583 },
       distance: 2.1,
-      type: 'mercado',
-      hours: '06:00 - 18:00'
+      type: 'mercado_organico',
+      hours: '07:00 - 22:00'
     },
     {
       id: 4,
-      name: 'Bio Market',
-      address: 'Rua da Imperatriz, 321 - Graças',
-      phone: '(81) 5678-9012',
+      name: 'Academia Boa Forma',
+      address: 'Rua Setúbal, 1010',
+      phone: '(81) 6666-6666',
       rating: 4.7,
+      location: { lat: -8.12222, lng: -34.90000 },
       distance: 1.5,
-      type: 'loja_natural',
-      hours: '09:00 - 19:00'
+      type: 'academia',
+      hours: '06:00 - 23:00'
     },
     {
       id: 5,
-      name: 'Farmácia Natural',
-      address: 'Av. Boa Viagem, 987 - Boa Viagem',
-      phone: '(81) 6789-0123',
-      rating: 4.5,
-      distance: 3.2,
-      type: 'farmacia',
-      hours: '08:00 - 22:00'
+      name: 'Vida Leve Produtos Naturais',
+      address: 'Av. Domingos Ferreira, 1515',
+      phone: '(81) 5555-5555',
+      rating: 4.3,
+      location: { lat: -8.13333, lng: -34.89500 },
+      distance: 2.3,
+      type: 'loja_natural',
+      hours: '08:30 - 19:30'
     }
-  ];
+  ]);
+  const [filteredSuppliers, setFilteredSuppliers] = useState<Supplier[]>(suppliers);
 
-  const filterTypes = [
-    { key: 'todos', label: 'Todos', count: suppliers.length },
-    { key: 'mercado', label: 'Mercados', count: suppliers.filter(s => s.type === 'mercado').length },
-    { key: 'loja_natural', label: 'Lojas Naturais', count: suppliers.filter(s => s.type === 'loja_natural').length },
-    { key: 'farmacia', label: 'Farmácias', count: suppliers.filter(s => s.type === 'farmacia').length }
-  ];
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Erro ao obter a localização:", error);
+        }
+      );
+    } else {
+      console.log("Geolocalização não suportada neste navegador.");
+    }
+  }, [setUserLocation]);
 
-  const filteredSuppliers = selectedFilter === 'todos' 
-    ? suppliers 
-    : suppliers.filter(s => s.type === selectedFilter);
+  useEffect(() => {
+    // Simula o filtro de fornecedores por tipo (loja_natural, academia)
+    const filtered = suppliers.filter(supplier => supplier.type === 'loja_natural');
+    setFilteredSuppliers(filtered);
+  }, [suppliers]);
 
-  const getDirections = (supplier: Supplier) => {
-    const address = encodeURIComponent(supplier.address + ', Recife, PE');
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${address}`;
-    window.open(url, '_blank');
+  const mapContainerStyle = {
+    width: '100%',
+    height: '400px',
   };
 
-  const callSupplier = (phone: string) => {
-    window.open(`tel:${phone}`, '_self');
+  const mapOptions = {
+    disableDefaultUI: true,
+    zoomControl: true,
   };
 
-  const handleSupplierMapClick = (supplier: Supplier) => {
+  const handleMarkerClick = (supplier: Supplier) => {
     setSelectedSupplier(supplier);
-    // Scroll para a lista de fornecedores
-    const supplierCard = document.getElementById(`supplier-${supplier.id}`);
-    if (supplierCard) {
-      supplierCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleViewProducts = (supplierName: string) => {
+    filterBySupplier(supplierName);
+  };
+
+  const handleNavigateToSupplier = () => {
+    if (selectedSupplier) {
+      // Implemente a lógica de navegação aqui, por exemplo, usando window.open
+      console.log(`Navegando para: ${selectedSupplier.address}`);
+      // window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedSupplier.location.lat},${selectedSupplier.location.lng}`);
+      navigate('/perfil');
     }
   };
 
   return (
     <section id="mapa" className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-[#706f18] mb-3">
-          Lojas e Fornecedores Próximos
+      <div>
+        <h2 className="text-3xl font-bold text-[#706f18]">
+          Encontre um Fornecedor Perto de Você
         </h2>
-        <p className="text-gray-600 text-lg">
-          Encontre os melhores locais para comprar seus alimentos saudáveis
+        <p className="text-gray-600">
+          Explore os fornecedores de alimentos saudáveis e academias na sua região
         </p>
       </div>
 
-      {/* Geolocalização */}
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-[#98a550]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Navigation className="w-5 h-5 text-[#98a550]" />
-            <div>
-              <h4 className="font-medium text-[#706f18]">Sua Localização</h4>
-              <p className="text-sm text-gray-600">
-                {userLocation 
-                  ? `Lat: ${userLocation.lat.toFixed(4)}, Lng: ${userLocation.lng.toFixed(4)}`
-                  : 'Localização não detectada'
-                }
-              </p>
+      {/* Mapa */}
+      {userLocation ? (
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''}>
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            zoom={15}
+            center={userLocation}
+            options={mapOptions}
+          >
+            {filteredSuppliers.map((supplier) => (
+              <Marker
+                key={supplier.id}
+                position={supplier.location}
+                onClick={() => handleMarkerClick(supplier)}
+              />
+            ))}
+          </GoogleMap>
+        </LoadScript>
+      ) : (
+        <p className="text-center text-gray-500">
+          Carregando mapa...
+        </p>
+      )}
+
+      {/* Lista de Fornecedores */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredSuppliers.map((supplier) => (
+          <Card key={supplier.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
+            <div className="relative">
+              <div className="absolute top-2 left-2 bg-white bg-opacity-80 rounded-md p-1 px-2 text-sm text-gray-700">
+                {supplier.type === 'loja_natural' ? 'Loja Natural' : 'Academia'}
+              </div>
             </div>
-          </div>
-          
-          <Button
-            onClick={getCurrentLocation}
-            disabled={geoLoading}
-            variant="outline"
-            className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
-          >
-            {geoLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Localizando...
-              </>
-            ) : (
-              <>
-                <Navigation className="w-4 h-4 mr-2" />
-                Usar Minha Localização
-              </>
-            )}
-          </Button>
-        </div>
-        
-        {geoError && (
-          <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
-            {geoError}
-          </div>
-        )}
-      </div>
-
-      {/* Filtros de Tipo */}
-      <div className="flex flex-wrap justify-center gap-3">
-        {filterTypes.map((filter) => (
-          <Button
-            key={filter.key}
-            variant={selectedFilter === filter.key ? 'default' : 'outline'}
-            onClick={() => setSelectedFilter(filter.key)}
-            className={`transition-all ${
-              selectedFilter === filter.key
-                ? 'bg-[#706f18] hover:bg-[#5a5a14]'
-                : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'
-            }`}
-          >
-            {filter.label} ({filter.count})
-          </Button>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Mapa Interativo Real */}
-        <div>
-          <InteractiveMap 
-            suppliers={filteredSuppliers}
-            userLocation={userLocation}
-            onSupplierClick={handleSupplierMapClick}
-          />
-        </div>
-
-        {/* Lista de Fornecedores */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-[#706f18]">
-              {filteredSuppliers.length} estabelecimentos encontrados
-            </h3>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
-            >
-              Ordenar por distância
-            </Button>
-          </div>
-
-          {filteredSuppliers
-            .sort((a, b) => a.distance - b.distance)
-            .map((supplier) => (
-            <Card 
-              key={supplier.id} 
-              id={`supplier-${supplier.id}`}
-              className={`p-6 hover:shadow-lg transition-all ${
-                selectedSupplier?.id === supplier.id ? 'ring-2 ring-[#98a550] bg-green-50' : ''
-              }`}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-[#706f18]">{supplier.name}</h3>
-                  <div className="flex items-center space-x-1 mt-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">{supplier.rating}</span>
-                    <Badge variant="outline" className="ml-2 text-xs border-[#98a550] text-[#98a550]">
-                      {supplier.distance} km
-                    </Badge>
-                  </div>
-                </div>
-                <Badge className={`${
-                  supplier.type === 'loja_natural' ? 'bg-green-500' :
-                  supplier.type === 'mercado' ? 'bg-blue-500' : 'bg-purple-500'
-                }`}>
-                  {supplier.type === 'loja_natural' ? 'Loja Natural' :
-                   supplier.type === 'mercado' ? 'Mercado' : 'Farmácia'}
-                </Badge>
+            
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-[#706f18] line-clamp-2">
+                {supplier.name}
+              </h3>
+              <div className="flex items-center space-x-1 mt-2">
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                <span className="text-sm font-medium">{supplier.rating}</span>
               </div>
+              <p className="text-gray-600 text-sm mt-2">
+                <MapPin className="w-3 h-3 inline mr-1" />
+                {supplier.address}
+              </p>
+              <p className="text-gray-600 text-sm">
+                <Phone className="w-3 h-3 inline mr-1" />
+                {supplier.phone}
+              </p>
 
-              <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <div className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {supplier.address}
-                </div>
-                <div className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  <button 
-                    onClick={() => callSupplier(supplier.phone)}
-                    className="hover:text-[#706f18] hover:underline transition-colors"
-                  >
-                    {supplier.phone}
-                  </button>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="w-4 h-4 mr-2" />
-                  {supplier.hours}
-                </div>
-              </div>
-
-              <div className="flex space-x-2">
-                <Button className="flex-1 bg-[#706f18] hover:bg-[#5a5a14]">
+              <div className="flex space-x-2 mt-4">
+                <Button 
+                  className="flex-1 bg-[#706f18] hover:bg-[#5a5a14]"
+                  onClick={() => handleViewProducts(supplier.name)}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
                   Ver Produtos
                 </Button>
                 <Button 
                   variant="outline" 
                   className="border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white"
-                  onClick={() => getDirections(supplier)}
+                  onClick={handleNavigateToSupplier}
                 >
-                  <Navigation className="w-4 h-4 mr-1" />
-                  Direções
+                  Ver Detalhes
                 </Button>
               </div>
-            </Card>
-          ))}
-        </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </section>
   );

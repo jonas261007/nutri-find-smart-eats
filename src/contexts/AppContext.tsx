@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Product, SearchFilters, Supplier, Gym } from '../types';
 
@@ -34,6 +33,10 @@ interface AppContextType {
   setIsLoadingProducts: (loading: boolean) => void;
   isLoadingLocation: boolean;
   setIsLoadingLocation: (loading: boolean) => void;
+  
+  // Supplier filtering
+  filterBySupplier: (supplierName: string) => void;
+  clearSupplierFilter: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -60,6 +63,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     priceRange: [0, 100],
     location: ''
   });
+
+  const [supplierFilter, setSupplierFilter] = useState<string>('');
 
   const [products, setProducts] = useState<Product[]>([
     {
@@ -134,8 +139,13 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
-  // Filter products based on current filters
+  // Filter products based on current filters and supplier filter
   const filteredProducts = products.filter(product => {
+    // Supplier filter (if active)
+    if (supplierFilter && product.supplier !== supplierFilter) {
+      return false;
+    }
+
     // Text search
     if (filters.query && !product.name.toLowerCase().includes(filters.query.toLowerCase())) {
       return false;
@@ -178,6 +188,21 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
     return true;
   });
+
+  const filterBySupplier = (supplierName: string) => {
+    setSupplierFilter(supplierName);
+    // Scroll to results section
+    setTimeout(() => {
+      const element = document.getElementById('resultados');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const clearSupplierFilter = () => {
+    setSupplierFilter('');
+  };
 
   const addToShoppingList = (product: Product, supplier: Supplier, quantity = 1) => {
     const existingItem = shoppingList.find(item => 
@@ -227,7 +252,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       isLoadingProducts,
       setIsLoadingProducts,
       isLoadingLocation,
-      setIsLoadingLocation
+      setIsLoadingLocation,
+      filterBySupplier,
+      clearSupplierFilter
     }}>
       {children}
     </AppContext.Provider>

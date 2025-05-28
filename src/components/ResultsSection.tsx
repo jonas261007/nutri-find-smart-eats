@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star, MapPin, ShoppingCart, AlertTriangle, TrendingDown, Eye } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -26,9 +25,14 @@ const supplierPrices = {
 };
 
 const ResultsSection = () => {
-  const { filteredProducts, addToShoppingList } = useApp();
+  const { filteredProducts, addToShoppingList, clearSupplierFilter } = useApp();
   const [sortBy, setSortBy] = useState<'price' | 'distance' | 'rating'>('price');
   const [showPriceComparison, setShowPriceComparison] = useState<number | null>(null);
+
+  // Check if there's an active supplier filter
+  const hasSupplierFilter = filteredProducts.length > 0 && 
+    new Set(filteredProducts.map(p => p.supplier)).size === 1;
+  const activeSupplier = hasSupplierFilter ? filteredProducts[0]?.supplier : null;
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
@@ -71,7 +75,20 @@ const ResultsSection = () => {
             <ShoppingCart className="w-10 h-10 text-gray-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">Nenhum produto encontrado</h3>
-          <p className="text-gray-500">Tente ajustar seus filtros para encontrar mais opções</p>
+          <p className="text-gray-500">
+            {activeSupplier 
+              ? `Nenhum produto encontrado para ${activeSupplier}`
+              : 'Tente ajustar seus filtros para encontrar mais opções'
+            }
+          </p>
+          {activeSupplier && (
+            <Button 
+              onClick={clearSupplierFilter}
+              className="mt-4 bg-[#706f18] hover:bg-[#5a5a14]"
+            >
+              Ver Todos os Produtos
+            </Button>
+          )}
         </div>
       </section>
     );
@@ -81,8 +98,21 @@ const ResultsSection = () => {
     <section id="resultados" className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-[#706f18]">Produtos Encontrados</h2>
-          <p className="text-gray-600">{sortedProducts.length} opções disponíveis</p>
+          <h2 className="text-3xl font-bold text-[#706f18]">
+            {activeSupplier ? `Produtos - ${activeSupplier}` : 'Produtos Encontrados'}
+          </h2>
+          <p className="text-gray-600">
+            {sortedProducts.length} opções disponíveis
+            {activeSupplier && (
+              <Button 
+                onClick={clearSupplierFilter}
+                variant="link"
+                className="ml-2 text-[#98a550] hover:text-[#706f18] p-0 h-auto"
+              >
+                • Ver todos os fornecedores
+              </Button>
+            )}
+          </p>
         </div>
 
         <div className="flex gap-2">
