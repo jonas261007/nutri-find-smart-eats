@@ -163,6 +163,6 @@
 ---
 
 ## 🔗 Frase para Documentação com Link**
-Acesse e explore o NutriFind Smart Eats, uma plataforma desenvolvida para facilitar a busca por alimentos saudáveis, com filtros inteligentes, leitura de rótulos e conexão com fornecedores e academias.
+Acesse e explore o NutriFind, uma plataforma desenvolvida para facilitar a busca por alimentos saudáveis, com filtros inteligentes, leitura de rótulos e conexão com fornecedores e academias.
 Acesse aqui: https://nutri-find-smart-eats.lovable.app/
 
