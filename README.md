@@ -1,4 +1,4 @@
-# 🥗 **Documentação Técnica — NutriFind Smart Eats**
+# 🥗 **Documentação Técnica — NutriFind**
 
 ## 🏷️ **Visão Geral do Projeto**
 
