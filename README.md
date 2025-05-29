@@ -2,7 +2,7 @@
 
 ## 🏷️ **Visão Geral do Projeto**
 
-**NutriFind Smart Eats** é um aplicativo web responsivo desenvolvido para ajudar usuários a encontrar alimentos saudáveis, alinhados às suas preferências alimentares, restrições (como alergias) e dietas específicas. O app também conecta usuários a fornecedores, lojas físicas, e oferece parcerias com academias. Inclui funcionalidades como leitura inteligente de rótulos, comparação de preços e localização dos melhores pontos de venda.
+**NutriFind** é um aplicativo web responsivo desenvolvido para ajudar usuários a encontrar alimentos saudáveis, alinhados às suas preferências alimentares, restrições (como alergias) e dietas específicas. O app também conecta usuários a fornecedores, lojas físicas, e oferece parcerias com academias. Inclui funcionalidades como leitura inteligente de rótulos, comparação de preços e localização dos melhores pontos de venda.
 
 ---
 
