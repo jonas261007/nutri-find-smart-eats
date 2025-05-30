@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Calendar, Star, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-
 const NutritionistConsultationCard = () => {
   const navigate = useNavigate();
-
-  return (
-    <section className="py-8 sm:py-12">
+  return <section className="py-8 sm:py-12">
       <Card className="bg-gradient-to-r from-[#706f18] to-[#98a550] text-white overflow-hidden relative">
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         
@@ -55,29 +51,18 @@ const NutritionistConsultationCard = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-            <Button
-              onClick={() => navigate('/nutricionistas')}
-              size="lg"
-              className="bg-white text-[#706f18] hover:bg-gray-100 font-semibold"
-            >
+            <Button onClick={() => navigate('/nutricionistas')} size="lg" className="bg-white text-[#706f18] hover:bg-gray-100 font-semibold">
               Ver Nutricionistas
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             
-            <Button
-              onClick={() => navigate('/nutricionistas')}
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-[#706f18] font-semibold"
-            >
+            <Button onClick={() => navigate('/nutricionistas')} size="lg" variant="outline" className="border-white hover:bg-white font-semibold text-primary-DEFAULT">
               <Calendar className="w-4 h-4 mr-2" />
               Agendar Consulta
             </Button>
           </div>
         </CardContent>
       </Card>
-    </section>
-  );
+    </section>;
 };
-
 export default NutritionistConsultationCard;
