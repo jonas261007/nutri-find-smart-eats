@@ -51,12 +51,12 @@ const NutritionistConsultationCard = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-            <Button onClick={() => navigate('/nutricionistas')} size="lg" className="bg-white text-[#706f18] hover:bg-gray-100 font-semibold">
+            <Button onClick={() => navigate('/nutricionistas')} size="lg" className="bg-white text-[#706f18] hover:bg-gray-300 font-semibold">
               Ver Nutricionistas
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             
-            <Button onClick={() => navigate('/nutricionistas')} size="lg" variant="outline" className="border-white hover:bg-white font-semibold text-primary-DEFAULT">
+            <Button onClick={() => navigate('/nutricionistas')} size="lg" variant="outline" className="bg-white text-[#706f18] hover:bg-gray-300 font-semibold">
               <Calendar className="w-4 h-4 mr-2" />
               Agendar Consulta
             </Button>
