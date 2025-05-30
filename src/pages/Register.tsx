@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -16,7 +15,7 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     phone: '',
-    userType: 'user', // 'user' or 'nutritionist'
+    userType: 'user' as 'user' | 'nutritionist', // Fixed typing
     crn: '' // Only for nutritionists
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +24,11 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'userType') {
+      setFormData(prev => ({ ...prev, [field]: value as 'user' | 'nutritionist' }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
