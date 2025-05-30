@@ -5,6 +5,7 @@ import SearchSection from '../components/SearchSection';
 import ResultsSection from '../components/ResultsSection';
 import MapSection from '../components/MapSection';
 import PartnershipsSection from '../components/PartnershipsSection';
+import NutritionistConsultationCard from '../components/NutritionistConsultationCard';
 import Footer from '../components/Footer';
 import ShoppingList from '../components/ShoppingList';
 import { ShoppingCart } from 'lucide-react';
@@ -20,7 +21,7 @@ const IndexContent = () => {
   const totalItems = shoppingList.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-green-50 overflow-x-hidden">
       <Header />
       
       {/* Botão flutuante da lista de compras */}
@@ -39,12 +40,15 @@ const IndexContent = () => {
       )}
 
       {/* Main content com padding-top para compensar header fixo */}
-      <main className="container mx-auto px-2 sm:px-3 pt-16 sm:pt-20 pb-4 sm:pb-6 space-y-6 sm:space-y-8">
+      <main className="container mx-auto px-2 sm:px-3 pt-16 sm:pt-20 pb-4 sm:pb-6 space-y-6 sm:space-y-8 max-w-full">
         <div id="busca">
           <SearchSection />
         </div>
         <div id="resultados">
           <ResultsSection />
+        </div>
+        <div id="consulta">
+          <NutritionistConsultationCard />
         </div>
         <div id="mapa">
           <MapSection />

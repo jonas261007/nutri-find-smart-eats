@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Label } from '../components/ui/label';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from '../components/ui/sonner';
-import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Phone, UserCheck } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,9 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: ''
+    phone: '',
+    userType: 'user', // 'user' or 'nutritionist'
+    crn: '' // Only for nutritionists
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,11 +46,18 @@ const Register = () => {
       return;
     }
 
+    if (formData.userType === 'nutritionist' && !formData.crn) {
+      toast.error('CRN é obrigatório para nutricionistas');
+      return;
+    }
+
     const success = await register({
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      phone: formData.phone
+      phone: formData.phone,
+      userType: formData.userType,
+      crn: formData.crn
     });
     
     if (success) {
@@ -65,10 +74,10 @@ const Register = () => {
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-[#e7e5a2] rounded-full flex items-center justify-center mx-auto mb-4">
             <img 
-  src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
-  alt="NutriFind Logo" 
-  className="w-10 h-10 md:w-14 md:h-14 object-contain"
-/>
+              src="/lovable-uploads/14b59a35-0106-40ae-a73e-592923ab6ccb.png" 
+              alt="NutriFind Logo" 
+              className="w-10 h-10 md:w-14 md:h-14 object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">NutriFind</h1>
           <p className="text-gray-600">Crie sua conta</p>
@@ -83,6 +92,35 @@ const Register = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* User Type Selection */}
+              <div className="space-y-2">
+                <Label>Tipo de usuário *</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="userType"
+                      value="user"
+                      checked={formData.userType === 'user'}
+                      onChange={(e) => handleChange('userType', e.target.value)}
+                      className="text-[#98a550] focus:ring-[#98a550]"
+                    />
+                    <span className="text-sm">Usuário</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="userType"
+                      value="nutritionist"
+                      checked={formData.userType === 'nutritionist'}
+                      onChange={(e) => handleChange('userType', e.target.value)}
+                      className="text-[#98a550] focus:ring-[#98a550]"
+                    />
+                    <span className="text-sm">Nutricionista</span>
+                  </label>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="name">Nome completo *</Label>
                 <div className="relative">
@@ -129,6 +167,24 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+              {formData.userType === 'nutritionist' && (
+                <div className="space-y-2">
+                  <Label htmlFor="crn">CRN *</Label>
+                  <div className="relative">
+                    <UserCheck className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="crn"
+                      type="text"
+                      placeholder="CRN-6 12345"
+                      value={formData.crn}
+                      onChange={(e) => handleChange('crn', e.target.value)}
+                      className="pl-10"
+                      required={formData.userType === 'nutritionist'}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="password">Senha *</Label>

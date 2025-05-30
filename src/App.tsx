@@ -9,6 +9,9 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Nutritionists from "./pages/Nutritionists";
+import NutritionistProfile from "./pages/NutritionistProfile";
+import Appointment from "./pages/Appointment";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +28,16 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Register />} />
+            <Route path="/nutricionistas" element={<Nutritionists />} />
+            <Route path="/nutricionista/:id" element={<NutritionistProfile />} />
+            <Route 
+              path="/agendamento" 
+              element={
+                <ProtectedRoute>
+                  <Appointment />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/perfil" 
               element={

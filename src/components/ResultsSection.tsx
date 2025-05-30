@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, MapPin, ShoppingCart, AlertTriangle, TrendingDown, Eye } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -95,19 +96,19 @@ const ResultsSection = () => {
   }
 
   return (
-    <section id="resultados" className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <section id="resultados" className="space-y-4 sm:space-y-6 overflow-hidden">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-[#706f18]">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#706f18]">
             {activeSupplier ? `Produtos - ${activeSupplier}` : 'Produtos Encontrados'}
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base">
             {sortedProducts.length} opções disponíveis
             {activeSupplier && (
               <Button 
                 onClick={clearSupplierFilter}
                 variant="link"
-                className="ml-2 text-[#98a550] hover:text-[#706f18] p-0 h-auto"
+                className="ml-2 text-[#98a550] hover:text-[#706f18] p-0 h-auto text-sm"
               >
                 • Ver todos os fornecedores
               </Button>
@@ -115,35 +116,47 @@ const ResultsSection = () => {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-2 w-full overflow-x-auto">
           <Button
             variant={sortBy === 'price' ? 'default' : 'outline'}
             onClick={() => setSortBy('price')}
-            className={sortBy === 'price' ? 'bg-[#706f18] hover:bg-[#5a5a14]' : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'}
+            className={`flex-1 sm:flex-none text-xs sm:text-sm whitespace-nowrap ${
+              sortBy === 'price' 
+                ? 'bg-[#706f18] hover:bg-[#5a5a14]' 
+                : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'
+            }`}
           >
-            <TrendingDown className="w-4 h-4 mr-1" />
+            <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             Menor Preço
           </Button>
           <Button
             variant={sortBy === 'distance' ? 'default' : 'outline'}
             onClick={() => setSortBy('distance')}
-            className={sortBy === 'distance' ? 'bg-[#706f18] hover:bg-[#5a5a14]' : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'}
+            className={`flex-1 sm:flex-none text-xs sm:text-sm whitespace-nowrap ${
+              sortBy === 'distance' 
+                ? 'bg-[#706f18] hover:bg-[#5a5a14]' 
+                : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'
+            }`}
           >
-            <MapPin className="w-4 h-4 mr-1" />
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             Mais Próximo
           </Button>
           <Button
             variant={sortBy === 'rating' ? 'default' : 'outline'}
             onClick={() => setSortBy('rating')}
-            className={sortBy === 'rating' ? 'bg-[#706f18] hover:bg-[#5a5a14]' : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'}
+            className={`flex-1 sm:flex-none text-xs sm:text-sm whitespace-nowrap ${
+              sortBy === 'rating' 
+                ? 'bg-[#706f18] hover:bg-[#5a5a14]' 
+                : 'border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white'
+            }`}
           >
-            <Star className="w-4 h-4 mr-1" />
+            <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             Melhor Avaliado
           </Button>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {sortedProducts.map((product) => {
           const bestPrice = getBestPrice(product.id);
           const priceData = supplierPrices[product.id as keyof typeof supplierPrices] || [];
