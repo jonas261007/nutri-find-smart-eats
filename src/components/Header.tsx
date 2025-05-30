@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Search, MapPin, Menu, X, User, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Avatar, AvatarFallback } from './ui/avatar';
 
 const Header = () => {
@@ -17,7 +17,7 @@ const Header = () => {
   };
 
   const scrollToSection = (sectionId: string) => {
-    if (location.pathname === '/perfil') {
+    if (location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
         const element = document.getElementById(sectionId);
@@ -43,6 +43,11 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const handleLogoClick = () => {
+    navigate('/');
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="bg-[#706f18] text-white shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
@@ -57,12 +62,11 @@ const Header = () => {
               />
             </div>
             <div>
-              <h1 
-                className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold cursor-pointer"
-                onClick={() => navigate('/')}
-              >
-                NutriFind
-              </h1>
+              <Link to="/" onClick={handleLogoClick}>
+                <h1 className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold cursor-pointer hover:text-green-200 transition-colors">
+                  NutriFind
+                </h1>
+              </Link>
               <p className="text-white-200 text-xs hidden sm:block">
                 Alimentos saudáveis para sua dieta
               </p>
@@ -95,6 +99,12 @@ const Header = () => {
             >
               Academias
             </button>
+            <Link 
+              to="/nutricionistas"
+              className="hover:text-green-200 transition-colors text-sm"
+            >
+              Nutricionistas
+            </Link>
           </nav>
 
           {/* Área de usuário e localização */}
@@ -172,6 +182,13 @@ const Header = () => {
               >
                 🏋️‍♂️ Academias
               </button>
+              <Link
+                to="/nutricionistas"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-left hover:text-green-200 transition-colors py-1 text-sm"
+              >
+                👩‍⚕️ Nutricionistas
+              </Link>
               
               {/* Botão de login/perfil no menu mobile */}
               <button
