@@ -1,19 +1,45 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, Filter, Camera, Upload } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import FilterPanel from './FilterPanel';
 import LabelReader from './LabelReader';
 import { useApp } from '../contexts/AppContext';
+import { toast } from '../components/ui/sonner';
 
 const SearchSection = () => {
   const { filters, setFilters } = useApp();
   const [showFilters, setShowFilters] = useState(false);
   const [showLabelReader, setShowLabelReader] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearchChange = (query: string) => {
     setFilters({ ...filters, query });
+  };
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de arquivo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecione um arquivo de imagem válido');
+      return;
+    }
+
+    // Validar tamanho (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Imagem muito grande. Máximo 5MB');
+      return;
+    }
+
+    // Simular processamento da imagem
+    toast.success(`Foto "${file.name}" enviada com sucesso!`);
+    console.log('Foto enviada:', file.name, 'Tamanho:', (file.size / 1024).toFixed(1) + 'KB');
+    
+    // Aqui você poderia integrar com um serviço de análise de imagem
+    // Por exemplo, enviar para uma API que identifica alimentos na foto
   };
 
   return (
@@ -65,12 +91,22 @@ const SearchSection = () => {
           </Button>
 
           <Button
+            onClick={() => fileInputRef.current?.click()}
             variant="outline"
             className="flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 border-[#98a550] text-[#98a550] hover:bg-[#98a550] hover:text-white transition-all text-xs sm:text-sm"
           >
             <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
             <span>Upload Foto</span>
           </Button>
+
+          {/* Input oculto para upload de arquivo */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden"
+          />
         </div>
 
         {/* Painel de Filtros */}
