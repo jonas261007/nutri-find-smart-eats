@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
@@ -10,6 +9,8 @@ interface User {
   address?: string;
   dietaryRestrictions?: string[];
   avatar?: string;
+  userType?: 'user' | 'nutritionist';
+  crn?: string;
 }
 
 interface AuthContextType {
@@ -26,6 +27,8 @@ interface RegisterData {
   email: string;
   password: string;
   phone?: string;
+  userType?: 'user' | 'nutritionist';
+  crn?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
