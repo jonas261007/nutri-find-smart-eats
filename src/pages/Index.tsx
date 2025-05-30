@@ -25,13 +25,13 @@ const IndexContent = () => {
       
       {/* Botão flutuante da lista de compras */}
       {totalItems > 0 && (
-        <div className="fixed bottom-6 right-6 z-40">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
           <Button
             onClick={() => setShowShoppingList(true)}
-            className="bg-[#706f18] hover:bg-[#626218] rounded-full w-14 h-14 shadow-lg relative"
+            className="bg-[#706f18] hover:bg-[#626218] rounded-full w-12 h-12 sm:w-14 sm:h-14 shadow-lg relative"
           >
-            <ShoppingCart className="w-6 h-6" />
-            <Badge className="absolute -top-2 -right-2 bg-red-500 border-white border-2">
+            <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Badge className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 border-white border-2 text-xs">
               {totalItems}
             </Badge>
           </Button>
@@ -39,7 +39,7 @@ const IndexContent = () => {
       )}
 
       {/* Main content com padding-top para compensar header fixo */}
-      <main className="container mx-auto px-4 pt-24 md:pt-28 pb-8 space-y-12">
+      <main className="container mx-auto px-3 sm:px-4 pt-20 sm:pt-24 md:pt-28 pb-6 sm:pb-8 space-y-8 sm:space-y-12">
         <div id="busca">
           <SearchSection />
         </div>
